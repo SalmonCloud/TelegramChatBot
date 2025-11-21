@@ -3,8 +3,8 @@ import logging
 from telethon import events
 from telethon.client.telegramclient import TelegramClient
 
-from src.app.config import settings
-from src.app.services import conversation_service
+from app.config import settings
+from app.services import conversation_service
 
 logger = logging.getLogger(__name__)
 

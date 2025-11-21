@@ -1,7 +1,7 @@
 import logging
 from typing import Optional, Dict, Any, List
 
-from src.app.db.connection import get_connection
+from app.db.connection import get_connection
 
 logger = logging.getLogger(__name__)
 

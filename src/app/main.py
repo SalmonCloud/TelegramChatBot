@@ -1,6 +1,6 @@
 import asyncio
-from src.app.logging_config import setup_logging
-from src.app.telegram.client import run_bot
+from app.logging_config import setup_logging
+from app.telegram.client import run_bot
 
 
 def main():

@@ -1,9 +1,9 @@
 import logging
 from telethon import TelegramClient
 
-from src.app.config import settings
-from src.app.telegram.handlers.customer_handlers import register_customer_handlers
-from src.app.telegram.handlers.staff_handlers import register_staff_handlers
+from app.config import settings
+from app.telegram.handlers.customer_handlers import register_customer_handlers
+from app.telegram.handlers.staff_handlers import register_staff_handlers
 
 logger = logging.getLogger(__name__)
 

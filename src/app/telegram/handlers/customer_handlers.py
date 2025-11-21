@@ -3,9 +3,9 @@ import logging
 from telethon import events
 from telethon.client.telegramclient import TelegramClient
 
-from src.app.config import settings
-from src.app.services import conversation_service
-from src.app.utils.formatting import format_new_customer_message
+from app.config import settings
+from app.services import conversation_service
+from app.utils.formatting import format_new_customer_message
 
 logger = logging.getLogger(__name__)
 

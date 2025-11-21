@@ -3,7 +3,7 @@ from typing import Tuple, Optional
 
 from telethon.tl.types import User
 
-from src.app.db import repositories as repo
+from app.db import repositories as repo
 
 logger = logging.getLogger(__name__)
 
