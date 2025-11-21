@@ -1,0 +1,54 @@
+# ------------ Secrets ------------
+.env
+.env.*
+# 如果有示例配置，可以保留：
+# !.env.example
+
+# ------------ Python venv ------------
+venv/
+.venv/
+env/
+.env/
+
+# ------------ Runtime data / DB ------------
+data/*
+!data/.gitkeep
+*.db
+*.sqlite
+*.log
+logs/
+
+# ------------ Session / cache files ------------
+# Session / cache files（aiogram / Telethon 等）
+*.session
+*.session-journal
+*.session-wal
+*.session-shm
+
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# mypy / pytest / coverage 等开发缓存
+.mypy_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.cache/
+*.pid
+
+# build / packaging
+build/
+dist/
+*.egg-info/
+
+# ------------ IDE / Editor ------------
+.idea/
+.vscode/
+*.iml
+
+# ------------ OS 杂项 ------------
+.DS_Store
+Thumbs.db
