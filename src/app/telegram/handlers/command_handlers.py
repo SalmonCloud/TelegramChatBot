@@ -42,6 +42,63 @@ def _format_server_list_for_city(
     return "\n".join(lines)
 
 
+def _format_bandwidth_list_for_city(
+    city_display: str,
+    country_display: str,
+    rows: List[Dict[str, Any]],
+) -> str:
+    """
+    把某个城市下所有机房的带宽价格列表，格式化成文本。
+    会按 datacenter 分组。
+    """
+    if not rows:
+        return f"当前 {city_display}（{country_display}）没有带宽价格数据。"
+
+    # 按机房分组
+    grouped: Dict[str, List[Dict[str, Any]]] = {}
+    for row in rows:
+        dc_code = row.get("datacenter_code") or "N/A"
+        grouped.setdefault(dc_code, []).append(row)
+
+    lines: List[str] = []
+    lines.append(f"{city_display}（{country_display}）带宽价格：\n")
+
+    for dc_code, dc_rows in grouped.items():
+        dc_name = dc_rows[0].get("datacenter_name") or ""
+        header = f"机房 {dc_code}"
+        if dc_name:
+            header += f"（{dc_name}）"
+        lines.append(header)
+
+        for r in dc_rows:
+            min_bw = r.get("min_bandwidth_gbps")
+            max_bw = r.get("max_bandwidth_gbps")
+
+            if min_bw is None and max_bw is None:
+                range_str = "带宽不限"
+            elif min_bw is None:
+                range_str = f"< {max_bw} Gbps"
+            elif max_bw is None:
+                range_str = f">= {min_bw} Gbps"
+            else:
+                range_str = f"{min_bw}–{max_bw} Gbps"
+
+            flat = r.get("flat_price_usd_per_mbps")
+            commit = r.get("commit_price_usd_per_mbps")
+            over = r.get("overage_price_usd_per_mbps")
+
+            lines.append(
+                f"  - {r.get('tier_label', range_str)}："
+                f"平价 ${flat:.3f}/Mbps，"
+                f"保底 ${commit:.3f}/Mbps，"
+                f"超量 ${over:.3f}/Mbps"
+            )
+
+        lines.append("")  # 机房之间空一行
+
+    return "\n".join(lines)
+
+
 def register_command_handlers(client: TelegramClient):
     """
     注册所有 /命令 相关的 handler
@@ -110,20 +167,59 @@ def register_command_handlers(client: TelegramClient):
         )
         await event.reply(reply_text)
 
+    # /bw_price_ - 顶层带宽价格查询命令
+    @client.on(events.NewMessage(pattern=r"^/bw_price_(?:@\w+)?(?:\s|$)"))
+    async def on_bw_price_root(event):
+        """
+        顶层带宽价格查询命令，只负责告诉用户下一步要用哪个命令。
+        """
+        text = (
+            "【独服带宽价格查询】\n\n"
+            "请根据机房位置选择一个具体的查询命令：\n"
+            "  /bw_price_hk  - 查询香港机房带宽价格\n"
+            "  /bw_price_sjc - 查询圣何塞机房带宽价格\n\n"
+            "请直接点击上面的命令，或者复制到输入框重新发送。"
+        )
+        await event.reply(text)
 
-    # /bw_price - 独服带宽价格查询
-    @client.on(events.NewMessage(pattern=r"^/bw_price(?:@\w+)?(?:\s|$)"))
-    async def on_bw_price(event):
-        full_text = (event.raw_text or "").strip()
-        parts = full_text.split(maxsplit=1)
-        args = parts[1] if len(parts) > 1 else None
+    # /bw_price_hk - 香港带宽价格
+    @client.on(events.NewMessage(pattern=r"^/bw_price_hk(?:@\w+)?(?:\s|$)"))
+    async def on_bw_price_hk(event):
+        try:
+            rows = repo.get_bandwidth_pricing_by_city_country(
+                city="Hong Kong",
+                country="China",
+                limit=100,
+            )
+        except Exception:
+            logger.exception("Failed to query bandwidth_pricing for Hong Kong")
+            await event.reply("查询香港机房带宽价格时出错，请稍后再试。")
+            return
 
-        # TODO: 在这里调用你的带宽价格查询逻辑
-        # result = query_bw_price(args)
+        reply_text = _format_bandwidth_list_for_city(
+            city_display="香港",
+            country_display="中国",
+            rows=rows,
+        )
+        await event.reply(reply_text)
 
-        reply_text = "【独服带宽价格查询】\n" \
-                     "（这里以后接你的带宽价格逻辑，当前是占位回复）"
-        if args:
-            reply_text += f"\n你输入的参数：{args}"
+    # /bw_price_sjc - 圣何塞带宽价格
+    @client.on(events.NewMessage(pattern=r"^/bw_price_sjc(?:@\w+)?(?:\s|$)"))
+    async def on_bw_price_sjc(event):
+        try:
+            rows = repo.get_bandwidth_pricing_by_city_country(
+                city="San Jose",
+                country="United States",
+                limit=100,
+            )
+        except Exception:
+            logger.exception("Failed to query bandwidth_pricing for San Jose")
+            await event.reply("查询圣何塞机房带宽价格时出错，请稍后再试。")
+            return
 
+        reply_text = _format_bandwidth_list_for_city(
+            city_display="圣何塞 (San Jose)",
+            country_display="美国",
+            rows=rows,
+        )
         await event.reply(reply_text)

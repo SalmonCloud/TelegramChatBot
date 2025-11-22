@@ -491,3 +491,50 @@ def get_available_servers_by_city_country(
             return _fetch_all(cur)
     finally:
         conn.close()
+
+
+# ========== bandwidth_pricing（带宽价格）相关 ==========
+
+def get_bandwidth_pricing_by_city_country(
+    city: str,
+    country: str,
+    limit: int = 100,
+) -> List[Dict[str, Any]]:
+    """
+    从 bandwidth_pricing 表中按城市+国家查询带宽价格列表。
+    返回指定城市/国家下所有机房、所有带宽档位。
+    """
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT
+                    id,
+                    country,
+                    city,
+                    datacenter_code,
+                    datacenter_name,
+                    tier_label,
+                    min_bandwidth_gbps,
+                    max_bandwidth_gbps,
+                    flat_price_usd_per_mbps,
+                    commit_price_usd_per_mbps,
+                    overage_price_usd_per_mbps,
+                    created_at,
+                    updated_at
+                FROM bandwidth_pricing
+                WHERE city = %s
+                  AND country = %s
+                ORDER BY
+                    datacenter_code ASC,
+                    min_bandwidth_gbps ASC,
+                    max_bandwidth_gbps ASC,
+                    id ASC
+                LIMIT %s
+                """,
+                (city, country, limit),
+            )
+            return _fetch_all(cur)
+    finally:
+        conn.close()

@@ -20,7 +20,7 @@ async def setup_bot_commands(client: TelegramClient):
             description="可交付独服库存查询",   # 描述可以是中文
         ),
         types.BotCommand(
-            command="bw_price",
+            command="bw_price_",
             description="独服带宽价格查询",
         ),
     ]
