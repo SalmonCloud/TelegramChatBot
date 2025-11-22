@@ -448,3 +448,46 @@ def find_message_by_group_message_id(group_message_id: int) -> Optional[Dict[str
             return _fetch_one(cur)
     finally:
         conn.close()
+
+
+# ========== server_info（服务器库存）相关 ==========
+
+def get_available_servers_by_city_country(
+    city: str,
+    country: str,
+    limit: int = 50,
+) -> List[Dict[str, Any]]:
+    """
+    从 server_info 表中按城市+国家查询当前可用的服务器列表。
+    只返回 available = 1 的记录，按价格从低到高排序。
+    """
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT
+                    id,
+                    city,
+                    country,
+                    product_code,
+                    cpu,
+                    ram,
+                    storage,
+                    nic,
+                    price_monthly_usd,
+                    available,
+                    created_at,
+                    updated_at
+                FROM server_info
+                WHERE city = %s
+                  AND country = %s
+                  AND available = 1
+                ORDER BY price_monthly_usd ASC, id ASC
+                LIMIT %s
+                """,
+                (city, country, limit),
+            )
+            return _fetch_all(cur)
+    finally:
+        conn.close()
