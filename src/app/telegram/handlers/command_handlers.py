@@ -33,7 +33,7 @@ def _format_server_list_for_city(
         lines.append(
             f"{idx}. [{row.get('product_code', 'N/A')}]\n"
             f"   CPU: {row.get('cpu', 'N/A')}\n"
-            f"   内存: {row.get('ram', 'N/A')}\n"
+            f"   内存: {row.get('total_ram', 'N/A')}\n"
             f"   硬盘: {row.get('storage', 'N/A')}\n"
             f"   网卡: {row.get('nic', 'N/A')}\n"
             f"   价格: ${price_str} / 月\n"
