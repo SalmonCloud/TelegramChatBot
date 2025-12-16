@@ -89,6 +89,7 @@ CREATE TABLE server_info (
     ram     VARCHAR(200) NOT NULL,   -- 例如：64GB DDR4
     storage VARCHAR(200) NOT NULL,   -- 例如：2x1TB NVMe + 2x4TB HDD
     nic     VARCHAR(200) DEFAULT NULL,  -- 例如：1Gbps / 10Gbps
+    included_bandwidth VARCHAR(200) DEFAULT NULL, -- 机器自带的带宽信息（如“10Gbps included”）
 
     -- 每月价格（美元）
     price_monthly_usd DECIMAL(10,2) NOT NULL,

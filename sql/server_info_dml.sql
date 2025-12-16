@@ -1,5 +1,5 @@
 INSERT INTO server_info
-    (city, country, product_code, cpu, ram, storage, nic, price_monthly_usd)
+    (city, country, product_code, cpu, ram, storage, nic, included_bandwidth, price_monthly_usd)
 VALUES
     -- E7C13-64-128-HKG
     ('Hong Kong', 'China',
@@ -8,6 +8,7 @@ VALUES
      'SK Hynix 32GB 2933MHz DDR4 ECC x4',
      'Intel P4510 NVMe 1TB x2',
      'Mellanox CX4 25G OCP x1',
+     '25Gbps included',
      229.00),
 
     -- E7V13-64-128-HKG
@@ -17,6 +18,7 @@ VALUES
      '32GB 2933MHz DDR4 ECC x4',
      'Intel P4510 NVMe 1TB x2',
      'Mellanox CX4 25G OCP x1',
+     '25Gbps included',
      229.00),
 
     -- E7413-24-128-HKG
@@ -26,6 +28,7 @@ VALUES
      '32GB 2933MHz DDR4 ECC x4',
      'Intel P4510 NVMe 1TB x2',
      'Mellanox CX4 25G OCP x1',
+     '25Gbps included',
      209.00),
 
     -- R9900X-12-128-HKG (记录 1)
@@ -35,6 +38,7 @@ VALUES
      '128GB DDR5 ECC',
      'M.2 NVMe 1TB x2',
      'Mellanox CX4 25G OCP x1',
+     '25Gbps included',
      269.00),
 
     -- R9900X-12-128-HKG (记录 2，与上面相同)
@@ -44,4 +48,5 @@ VALUES
      '128GB DDR5 ECC',
      'M.2 NVMe 1TB x2',
      'Mellanox CX4 25G OCP x1',
+     '25Gbps included',
      269.00);

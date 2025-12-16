@@ -22,12 +22,27 @@ def _format_server_list_for_city(
     if not rows:
         return f"当前 {city_display}（{country_display}）没有可用的独服库存。"
 
-    lines: List[str] = []
-    lines.append(f"{city_display}（{country_display}）当前可用独服：共 {len(rows)} 台\n")
+    # 按 product_code 合并：展示首条配置，附上数量
+    grouped: Dict[str, Dict[str, Any]] = {}
+    order: List[str] = []
+    for row in rows:
+        code = row.get("product_code", "N/A")
+        if code not in grouped:
+            grouped[code] = {"row": row, "count": 1}
+            order.append(code)
+        else:
+            grouped[code]["count"] += 1
 
-    for idx, row in enumerate(rows, start=1):
+    total_count = len(rows)
+    lines: List[str] = []
+    lines.append(f"{city_display}（{country_display}）当前可用独服：共 {total_count} 台\n")
+
+    for idx, code in enumerate(order, start=1):
+        entry = grouped[code]
+        row = entry["row"]
+        count = entry["count"]
+
         price = row.get("price_monthly_usd")
-        # Decimal 也可以这么格式化
         price_str = f"{price:.2f}" if price is not None else "N/A"
 
         lines.append(
@@ -36,6 +51,8 @@ def _format_server_list_for_city(
             f"   内存: {row.get('total_ram', 'N/A')}\n"
             f"   硬盘: {row.get('storage', 'N/A')}\n"
             f"   网卡: {row.get('nic', 'N/A')}\n"
+            f"   赠送带宽: {row.get('included_bandwidth', 'N/A')}\n"
+            f"   数量: {count} 台\n"
             f"   价格: ${price_str} / 月\n"
         )
 

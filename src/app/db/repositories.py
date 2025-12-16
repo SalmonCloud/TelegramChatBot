@@ -475,6 +475,7 @@ def get_available_servers_by_city_country(
                     total_ram,
                     storage,
                     nic,
+                    included_bandwidth,
                     price_monthly_usd,
                     available,
                     created_at,
